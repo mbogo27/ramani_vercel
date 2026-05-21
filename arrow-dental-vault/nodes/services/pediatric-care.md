@@ -6,27 +6,28 @@ tags:
   - services
   - pediatric
   - children
-  - family 
-related: 
+  - family
+related:
   - general-dentistry
   - class-services
   - class-audience-families
 shadow: false
 ---
 
-# Pediatric Care — Arrow Dental Centre
+# Pediatric Care - Arrow Dental Centre
 
 ## What It Is
 
-Dental care designed specifically for children aged 2-16. Gentle, educational, fear-free by design.
+Dental care designed specifically for children aged 2-16.
+It should feel gentle, educational, and fear-free.
 
-## What's Covered 
+## What's Covered
 
-All general and preventive dentistry for children: 
 - Cleanings and checkups
 - Fillings
 - Extractions
-- Oral Health Education 
+- Oral health education
+- Early orthodontic guidance when relevant
 
 ## Key Signals That Route Here
 
@@ -34,21 +35,21 @@ All general and preventive dentistry for children:
 
 ## Patient Framing
 
-The patient is the parent — speak to their concern, not the child's. Parents worry about: pain, fear, cooperation, cost. 
-Lead with: gentle approach, educational framing, fear-free environment. 
+The patient is usually the parent, so speak to the parent's concern, not the child's.
+Lead with a gentle approach, educational framing, and a fear-free environment.
 
-> "Our pediatric care is gentle, fun, and educational for children
-> aged 2–16. We make dental visits something kids look forward to."
+> "Our pediatric care is gentle, fun, and educational for children aged 2-16. We make dental visits something kids look forward to."
 
 ## Age Boundary
 
-Ages 2-16. Outside this range → route to general dentistry.  
+Ages 2-16. Outside this range -> route to general dentistry.
 
 ## Audience Link
 
 Queries here almost always come from [[class-audience-families]].
 
 ## Related
-- [[general=dentistry]]
+
+- [[general-dentistry]]
 - [[class-audience-families]]
 - [[class-services]]

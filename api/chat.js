@@ -1,31 +1,4 @@
-const OPENROUTER_MODELS = ["x-ai/grok-4.20", "x-ai/grok-4.1-fast"]
-
-const SYSTEM_PROMPT = `You are Arrow Dental Centre's AI assistant - an agentic surface projected from the Arrow Dental Ramani knowledge vault.
-
-Ground truth:
-- Business: Arrow Dental Centre
-- Tagline: Sharpening Smiles. Touching Lives
-- Locations: Nairobi CBD at Pension Towers, Loita Street (2nd Floor main clinic, 5th Floor specialist clinic); Thika Road at CPA Centre, 2nd Floor; Thika Town at Thika Gateway Plaza, Gakere Road, 2nd Floor
-- Hours: Monday to Saturday 7:00am-9:00pm, Sunday 8:30am-6:00pm
-- Contact: WhatsApp 0740187579, alternate 0740 579 064, email arrowdentalke@gmail.com
-- Services: general dentistry, cosmetic dentistry, restorative dentistry, pediatric care for ages 2-16
-- Core procedures: fillings, extractions, full mouth cleaning, root canals, braces, veneers, whitening, implants, crowns, bridges, dentures, gum disease treatment, wisdom teeth removal
-- Trust signals: 15 years in practice, 30+ dental professionals, 150,000+ patients served, licensed by the Kenya Dental Council, infection control certified
-- Pricing rules: do not volunteer pricing unless asked directly; consultation is Ksh 1,000; other prices must use starting-from language
-- Published prices: extraction from Ksh 3,000; fillings from Ksh 5,000; cleaning from Ksh 6,000; root canal from Ksh 12,000; crowns from Ksh 26,000; bridges from Ksh 25,000 per unit; braces from Ksh 90,000 per jaw or Ksh 160,000 both jaws; whitening from Ksh 28,000; veneers from Ksh 24,000 per tooth; dentures from Ksh 13,000; implants from Ksh 140,000
-- Insurance: SHA/NHIF for civil servants, AAR, APA, CIC Group, Liaison Group, SAHAM Assurance, Equity, Eagle Africa, Unisure Mua, First Assurance, Takaful, UAP, Minet, Kenyan Alliance, MTN, Madiso, Laser Insurance Brokers, Carepay m-tiba, NIS Retirees, Fidelity, Britam, Heritage, Clarkson, Trident, Kenya Pipeline Company
-- Payment plans: available for braces and implants
-- Offer: Ksh 1,000 consultation plus X-ray included
-
-Tone rules:
-- Warm, professional, reassuring, expert
-- Empathy first for pain, fear, complaints, or distress
-- Short sentences, simple language, one clear CTA
-- Never use the word "free"
-- Never use "cheap"
-- For emotional situations, keep it short and direct the patient to WhatsApp
-
-If asked how you work, explain briefly that you are an agent surface crystallised from the clinic's Ramani knowledge vault, and that the same vault also powers the website and intake workflow.`
+const OPENROUTER_MODEL = "mistralai/ministral-14b-2512"
 
 function parseBody(body) {
   if (!body) {
@@ -41,6 +14,134 @@ function parseBody(body) {
   return body
 }
 
+function readVault(body) {
+  return body?.vault && typeof body.vault === "object" ? body.vault : null
+}
+
+function isPriceQuestion(text) {
+  return /\b(price|pricing|cost|charges|fee|how much)\b/i.test(text || "")
+}
+
+function getConsultationPrice(vault) {
+  return vault?.pricing?.find((entry) => String(entry.service).toLowerCase() === "consultation")?.price || "Ksh 1,000"
+}
+
+function getConsultationOfferText(vault) {
+  return `Consultation is ${getConsultationPrice(vault)} and includes oral examination and X-ray.`
+}
+
+function buildAgentSystemPrompt(vault, userText) {
+  const locationText = vault.locations.map((location) => `${location.name}: ${location.address}, ${location.floor}`).join("; ")
+  const serviceText = vault.services.map((service) => service.title).join(", ")
+  const pricingText = vault.pricing.map((entry) => `${entry.service}: ${entry.price}`).join("; ")
+  const priceAsked = isPriceQuestion(userText)
+
+  return `You are ${vault.brand.fullName}'s AI assistant.
+
+Ground truth:
+- Business: ${vault.brand.fullName}
+- Tagline: ${vault.brand.tagline}
+- Locations: ${locationText}
+- Hours: Monday to Saturday ${vault.hours.weekday}, Sunday ${vault.hours.sunday}
+- Contact: WhatsApp ${vault.contact.whatsapp}, alternate ${vault.contact.alternate}, email ${vault.contact.email}
+- Services: ${serviceText}
+- Published pricing: ${pricingText}
+- Offer: ${getConsultationOfferText(vault)}
+- Insurance note: ${vault.insurance.note}
+- Payment note: ${vault.payments.installments}
+
+Tone rules:
+- ${vault.voice.personality}
+- ${vault.voice.style}
+- Empathy first for pain, fear, complaints, or distress
+- Never use these terms: ${vault.forbiddenWords.bannedTerms}
+- ${vault.forbiddenWords.apologyGuardrail}
+- ${vault.forbiddenWords.consultationGuardrail}
+- Pricing gate: ${priceAsked ? "The user has explicitly asked about price, so you may mention pricing." : "The user has not explicitly asked about price, so do not mention any prices, consultation fee, or Ksh amounts."}
+- Never use the consultation fee as a CTA unless the user explicitly asked about price
+- If pricing is explicitly asked: consultation is ${getConsultationPrice(vault)} with no qualifier
+- If pricing is explicitly asked: for non-consultation services, use starting-from language
+
+Return clean markdown when useful for readability.`
+}
+
+function buildContentSystemPrompt(vault) {
+  return `You are Ramani OS content generation for ${vault.brand.fullName}.
+
+Use the vault as your context:
+- Design system: light, warm, terracotta and beige, family-friendly, modern healthcare
+- Brand: ${vault.brand.tagline}
+- Brand summary: ${vault.brand.shortDescription}
+- Services: ${vault.services.map((service) => service.title).join(", ")}
+- Pricing: ${vault.pricing.map((entry) => `${entry.service} ${entry.price}`).join("; ")}
+- Offer: ${getConsultationOfferText(vault)}
+- Locations: ${vault.locations.map((location) => location.name).join(", ")}
+- Hours: Monday to Saturday ${vault.hours.weekday}, Sunday ${vault.hours.sunday}
+- Voice: ${vault.voice.personality}
+- Writing style: ${vault.voice.style}
+- Content rules: ${vault.contentRules.instagramCaptionLength}; ${vault.contentRules.ctaRule}; ${vault.contentRules.pricingRule}
+- Visual rule: ${vault.contentRules.visualRule}
+- Forbidden words: ${vault.forbiddenWords.bannedTerms}
+- Guardrails: ${vault.forbiddenWords.consultationGuardrail}; ${vault.forbiddenWords.apologyGuardrail}
+- Hashtags: ${vault.hashtags.permanent}
+
+Instagram-specific output rules for this demo:
+- Never use the word "free"
+- Never say "Open 7 days"
+- If consultation is mentioned, say: "${getConsultationOfferText(vault)}"
+- If payment plans are relevant, use: "${vault.offers.bracesPaymentPlan}" or "${vault.offers.implantsPaymentPlan}"
+- Use exactly these 3 hashtags and no others: ${vault.hashtags.permanent}
+- Do not invent testimonials, named patients, or quotes
+- Do not suggest real-patient photography; keep visual notes aligned to placeholder imagery and SVG-friendly design language
+
+Generate concise, polished marketing copy grounded in those facts and obey every guardrail above.
+Return clean markdown when useful for readability.`
+}
+
+async function readJsonSafe(response) {
+  const raw = await response.text()
+  if (!raw) {
+    return {}
+  }
+
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return { error: { message: raw } }
+  }
+}
+
+async function callOpenRouter({ apiKey, origin, messages }) {
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": origin,
+      "X-Title": "Ramani OS Demo",
+    },
+    body: JSON.stringify({
+      model: OPENROUTER_MODEL,
+      messages,
+      stream: false,
+    }),
+  })
+
+  const data = await readJsonSafe(response)
+  if (!response.ok) {
+    return {
+      ok: false,
+      error: data?.error?.message || data?.message || "Agent request failed",
+    }
+  }
+
+  return {
+    ok: true,
+    reply: data?.choices?.[0]?.message?.content || "I could not generate a reply.",
+    model: OPENROUTER_MODEL,
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST")
@@ -53,40 +154,55 @@ export default async function handler(req, res) {
   }
 
   const body = parseBody(req.body)
-  const messages = Array.isArray(body?.messages) ? body.messages : null
+  const vault = readVault(body)
+  const origin = req.headers.origin || `https://${req.headers.host || "localhost"}`
 
+  if (!vault) {
+    return res.status(400).json({ error: "Request must include the current vault state." })
+  }
+
+  const mode = body?.mode || "agent"
+
+  if (mode === "content-gen") {
+    const prompt = typeof body?.prompt === "string" ? body.prompt.trim() : ""
+    const platform = typeof body?.platform === "string" ? body.platform.trim() : "Website"
+    const tone = typeof body?.tone === "string" ? body.tone.trim() : "Warm and professional"
+
+    if (!prompt) {
+      return res.status(400).json({ error: "Content generation requires a prompt." })
+    }
+
+    const result = await callOpenRouter({
+      apiKey,
+      origin,
+      messages: [
+        { role: "system", content: buildContentSystemPrompt(vault) },
+        { role: "user", content: `Platform: ${platform}\nTone: ${tone}\nRequest: ${prompt}` },
+      ],
+    })
+
+    if (!result.ok) {
+      return res.status(502).json({ error: result.error })
+    }
+
+    return res.status(200).json({ reply: result.reply, model: result.model })
+  }
+
+  const messages = Array.isArray(body?.messages) ? body.messages : null
   if (!messages || messages.length === 0) {
     return res.status(400).json({ error: "Request must include a non-empty messages array." })
   }
 
-  const origin = req.headers.origin || `https://${req.headers.host || "localhost"}`
-  const apiMessages = [{ role: "system", content: SYSTEM_PROMPT }, ...messages]
-  let lastError = "Agent request failed"
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user")?.content || ""
+  const result = await callOpenRouter({
+    apiKey,
+    origin,
+    messages: [{ role: "system", content: buildAgentSystemPrompt(vault, latestUserMessage) }, ...messages],
+  })
 
-  for (const model of OPENROUTER_MODELS) {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": origin,
-        "X-Title": "Ramani OS Demo",
-      },
-      body: JSON.stringify({
-        model,
-        messages: apiMessages,
-        stream: false,
-      }),
-    })
-
-    const data = await response.json()
-    if (response.ok) {
-      const reply = data?.choices?.[0]?.message?.content || "I could not generate a reply."
-      return res.status(200).json({ reply, model })
-    }
-
-    lastError = data?.error?.message || "Agent request failed"
+  if (!result.ok) {
+    return res.status(502).json({ error: result.error })
   }
 
-  return res.status(502).json({ error: lastError })
+  return res.status(200).json({ reply: result.reply, model: result.model })
 }

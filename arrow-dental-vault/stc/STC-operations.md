@@ -137,32 +137,34 @@ activated_by:
 topology_scope:
   description: >
     Reachable from all patient-facing hyperedges and trajectories.
-    This is the most permissively scoped STC in the vault —
+    This is the most permissively scoped STC in the vault -
     operational data (hours, location, contact) is safe to surface
     in any context.
   unreachable_from: []
 ---
 
-# STC — Operations Contract
+# STC - Operations Contract
 
 ## Purpose
-Provides read-only access to Arrow Dental's operational data:
-contact details, branch information, operating hours, and
-insurance acceptance. Backed by a local SQLite database for
-demo purposes — production deploys point to live CMS or ERP.
 
-## Why SQLite for Demo
-Allows full bootloader testing without external API dependency.
-The transport field is the only thing that changes when going
-to production — the schema, constraints, and topology are identical.
+Provides read-only access to Arrow Dental's operational data:
+contact details, branch information, operating hours, and insurance acceptance.
+Backed by a local SQLite database for demo purposes - production deploys point to live CMS or ERP.
+
+## Why SQLite For Demo
+
+Allows full bootloader testing without an external API dependency.
+The transport field is the only thing that changes when going to production - the schema, constraints, and topology stay the same.
 
 ## Topology Scope
-Reachable from all hyperedges. Operational data is context-safe —
-no PII, no financial data, no patient records.
+
+Reachable from all hyperedges. Operational data is context-safe - no PII, no patient records, and no write actions.
 
 ## Fallback Behavior
-If database unreachable: serve hardcoded reference values from
-the STC node itself. Log fallback in trace. Never fabricate.
+
+If the database is unreachable, serve hardcoded reference values from this STC node.
+Log the fallback in trace. Never fabricate.
 
 ## Data Handling
-No PII. Results are ephemeral. Safe to surface directly to patient.
+
+No PII. Results are ephemeral. Safe to surface directly to patients.

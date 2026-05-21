@@ -1,52 +1,54 @@
 ---
 type: concept
 domain: services
-label: General Dentistry 
+label: General Dentistry
 tags:
   - services
   - general
-  - preventive 
+  - preventive
 related:
-  - cosmetic-dentistry 
-  - restorative-dentistry 
+  - cosmetic-dentistry
+  - restorative-dentistry
   - pediatric-care
   - class-services
 shadow: false
 ---
 
-# General Dentistry — Arrow Dental Centre
+# General Dentistry - Arrow Dental Centre
 
 ## What It Is
 
-Preventive and routine dental care. The entry point for most patients. 
-Walk-in friendly — no referral needed.
+Preventive and routine dental care. This is the entry point for most patients.
+Walk-ins are welcome and no referral is needed.
 
 ## Procedures
 
 - Fillings
 - Extractions
 - Full mouth cleaning
-- Root canals 
+- Root canals
+- Routine consultations and checkups
 
 ## Key Signals That Route Here
-`cleaning` `filling` `extraction` `tooth pulled` `root canal` `routine checkup` `general` `basic`
 
+`cleaning` `filling` `extraction` `tooth pulled` `root canal` `routine checkup` `general` `basic`
 
 ## Patient Framing
 
-Lead with: walk-in welcome, same-day availability, gentle approach. 
-Most patients are nervous about these procedures — reassure before informing. 
+Lead with walk-in welcome, same-day practicality, and a gentle approach.
+Many patients are nervous about these procedures, so reassure before informing.
 
-## Cross-links
+## Cross-Links
+
 Patients asking about general dentistry who mention children
-→ route to [[pediatric-care]]
+- route to [[pediatric-care]]
 
-Patients asking about general dentistry who mention cosmetic dentistry 
-→ route to [[HE-emergency-pain-response]]
+Patients asking about general dentistry who mention cosmetic goals
+- route to [[cosmetic-dentistry]]
 
 ## Related
+
 - [[cosmetic-dentistry]]
 - [[restorative-dentistry]]
 - [[pediatric-care]]
 - [[class-services]]
-

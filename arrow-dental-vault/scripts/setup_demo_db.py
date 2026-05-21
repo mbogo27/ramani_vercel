@@ -85,41 +85,64 @@ cur.execute(
 cur.executemany(
     "INSERT INTO appointments (patient_id, appointment_date, appointment_time, branch, procedure_type) VALUES (?, ?, ?, ?, ?)",
     [
-        (1, "2026-04-15", "10:30", "CBD Branch", "Routine cleaning"),
-        (1, "2026-04-25", "14:00", "Thika Branch", "Wisdom tooth consultation"),
-        (2, "2026-04-17", "09:00", "CBD Branch", "Filling"),
+        (1, "2026-04-15", "10:30", "Nairobi CBD - Main", "Routine cleaning"),
+        (1, "2026-04-25", "14:00", "Thika Road", "Wisdom tooth consultation"),
+        (2, "2026-04-17", "09:00", "Nairobi CBD - Main", "Filling"),
     ]
 )
 
 cur.execute(
     "INSERT INTO contact_details (whatsapp, phone, email) VALUES (?, ?, ?)",
-    ("+254712345678", "+254711000000", "hello@arrowdental.co.ke")
+    ("0740187579", "0740187579", "arrowdentalke@gmail.com")
 )
 
 cur.executemany(
     "INSERT INTO branches (branch_name, address, floor, maps_link) VALUES (?, ?, ?, ?)",
     [
-        ("CBD Branch", "Pension Towers, Kimathi St, Nairobi", "Ground Floor", "https://goo.gl/maps/arrow-cbd"),
-        ("Thika Branch", "Thika Road Mall, Thika", "First Floor", "https://goo.gl/maps/arrow-thika"),
+        ("Nairobi CBD - Main", "Pension Towers, Loita Street", "2nd Floor", "https://maps.app.goo.gl/C5hyHLpoAgPDkzzr9"),
+        ("Nairobi CBD - Specialist", "Pension Towers, Loita Street", "5th Floor", "https://maps.app.goo.gl/C5hyHLpoAgPDkzzr9"),
+        ("Thika Road", "CPA Centre, Thika Road", "2nd Floor", "https://maps.app.goo.gl/LaBGCsY3ZyFxZMb2A"),
+        ("Thika Town", "Thika Gateway Plaza, Gakere Road", "2nd Floor", "https://maps.app.goo.gl/gB6xXVVic6ncBzPg9"),
     ]
 )
 
 cur.executemany(
     "INSERT INTO operating_hours (day, open_time, close_time) VALUES (?, ?, ?)",
     [
-        ("weekday", "08:00", "18:00"),
-        ("saturday", "09:00", "14:00"),
-        ("sunday", "10:00", "13:00"),
+        ("weekday", "07:00", "21:00"),
+        ("saturday", "07:00", "21:00"),
+        ("sunday", "08:30", "18:00"),
     ]
 )
 
 cur.executemany(
     "INSERT INTO insurance (provider_name, accepted) VALUES (?, ?)",
     [
-        ("NHIF", 1),
+        ("SHA/NHIF for Civil Servants", 1),
         ("AAR", 1),
+        ("APA", 1),
+        ("CIC Group", 1),
+        ("Liaison Group", 1),
+        ("SAHAM Assurance", 1),
+        ("Equity", 1),
+        ("Eagle Africa", 1),
+        ("Unisure Mua", 1),
+        ("First Assurance", 1),
+        ("Takaful", 1),
+        ("UAP", 1),
+        ("Minet", 1),
+        ("Kenyan Alliance", 1),
+        ("MTN", 1),
+        ("Madiso", 1),
+        ("Laser Insurance Brokers", 1),
+        ("Carepay m-tiba", 1),
+        ("NIS Retirees", 1),
+        ("Fidelity", 1),
         ("Britam", 1),
-        ("CIC", 0),
+        ("Heritage", 1),
+        ("Clarkson", 1),
+        ("Trident", 1),
+        ("Kenya Pipeline Company", 1),
     ]
 )
 

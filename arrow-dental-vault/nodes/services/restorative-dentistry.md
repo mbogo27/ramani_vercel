@@ -1,26 +1,25 @@
 ---
 type: concept
 domain: services
-label: Restorative Dentistry 
-tags: 
-  - services 
+label: Restorative Dentistry
+tags:
+  - services
   - restorative
   - surgical
-related: 
+related:
   - general-dentistry
-  - cosmetic-dentistry 
+  - cosmetic-dentistry
   - class-services
-  - proof-points 
-shadow: false 
+  - proof-points
+shadow: false
 ---
 
-# Restorative Dentistry — Arrow Dental Centre
-
+# Restorative Dentistry - Arrow Dental Centre
 
 ## What It Is
 
-Treatments that restore function and structure to damaged or missing teeth. Higher complexity, higher cost, highest reassurance need. 
-
+Treatments that restore function and structure to damaged or missing teeth.
+These queries usually need the most reassurance.
 
 ## Procedures
 
@@ -28,38 +27,34 @@ Treatments that restore function and structure to damaged or missing teeth. High
 - Crowns
 - Bridges
 - Dentures
-- Gum Disease Treatment
+- Gum disease treatment
 - Wisdom teeth removal
-
 
 ## Key Signals That Route Here
 
-`implant` `crown` `bridge` `denture` `missing tooth` `gum disease` `wisdom tooth` `extraction` `replace tooth`
+`implant` `crown` `bridge` `denture` `missing tooth` `gum disease` `wisdom tooth` `replace tooth`
 
+## Patient Framing
 
-## Patient Framing 
-
-These patients often carry fear or financial concern. 
-Always: reassure on pain management first, then inform on procedure then mention payment plans  before they ask. 
+These patients often carry fear or financial concern.
+Reassure on pain management first, then explain the procedure clearly.
 
 ## Pain Management Script
 
-> "The procedure is done under local anesthetic — most patients are
-> surprised by how comfortable it is."
+> "The procedure is done under local anesthetic - most patients are surprised by how comfortable it is."
 
-Use this framing for implants, wisdom teeth removal, and gum treatment. 
-
+Use this framing for implants, wisdom teeth removal, and gum treatment when reassurance is needed.
 
 ## Payment Plan Trigger
 
-If patient mentions implants or braces → proactively mention payment plans are available before they ask about cost. 
+If the patient mentions implants and sounds cost-sensitive, mention that payment plans are available.
 
+## Proof Adjacency
 
-## Proof Adjacency 
-
-High-stakes queries here →  load [[proof-points]] to build confidence before giving clinical details. 
+High-stakes queries here -> load [[proof-points]] to build confidence before giving clinical details.
 
 ## Related
+
 - [[general-dentistry]]
 - [[cosmetic-dentistry]]
 - [[proof-points]]

@@ -55,7 +55,7 @@ Important implementation details:
 - Emergency signals can override the budget
 - The runtime always tries to load tone and language constraints before patient-facing generation
 - The LLM call is configured through `.env` using `OPENROUTER_API_KEY`
-- The current model in code is `x-ai/grok-4.1-fast`
+- The current model in code is `mistralai/ministral-14b-2512`
 
 ## What Is Actually Implemented Today
 

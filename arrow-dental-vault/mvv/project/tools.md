@@ -50,9 +50,10 @@ Structured facts:
 
 #### Branches
 
-- Nairobi CBD: Pension Towers, Loita Street, Entire 2nd Floor
-- Thika Road: CPA Centre, 2nd Floor, Thika Superhighway, Nairobi
-- Thika Town: 2nd Floor, Thika Gateway Plaza, Gakere Road, Thika
+- Nairobi CBD - Main: Pension Towers, Loita Street, 2nd Floor
+- Nairobi CBD - Specialist: Pension Towers, Loita Street, 5th Floor
+- Thika Road: CPA Centre, 2nd Floor, Thika Road
+- Thika Town: Thika Gateway Plaza, Gakere Road, 2nd Floor
 
 #### Business Hours
 

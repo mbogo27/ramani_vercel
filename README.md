@@ -1,15 +1,22 @@
-# Ramani Vercel App
+# Ramani Demo
 
-Deployable Vercel version of the Ramani OS demo for Arrow Dental Centre.
+Arrow Dental Ramani OS demo with:
 
-## What Changed In This Copy
+- light website projection
+- vault-grounded content generation
+- vault-grounded agent chat
+- admin vault editing
+- local browser appointment persistence for demo use
 
-- frontend copied into a clean project folder
-- browser-side OpenRouter call removed
-- Vercel serverless function added at `api/chat.js`
-- OpenRouter key now stays server-side as `OPENROUTER_API_KEY`
+## Environment
 
-## Local Development
+Create `.env` from `.env.example` and set:
+
+```bash
+OPENROUTER_API_KEY=your_key_here
+```
+
+## Local development
 
 Install dependencies:
 
@@ -17,53 +24,26 @@ Install dependencies:
 npm install
 ```
 
-Frontend only:
-
-```bash
-npm run dev
-```
-
-Full app with Vercel function locally:
+Run the full app with Vercel functions:
 
 ```bash
 vercel dev
 ```
 
-For local server-side chat, create `.env` from `.env.example` and set:
+`npm run dev` only starts the Vite frontend. Chat and content generation use `/api/chat`, so for the full demo you should run `vercel dev`.
 
-```bash
-OPENROUTER_API_KEY=your_key_here
-```
+## Deployment
 
-## Deploy To Vercel
+This project is Vercel-ready:
 
-Project settings:
+- framework: Vite
+- output directory: `dist`
+- server function: `api/chat.js`
 
-- Framework Preset: `Vite`
-- Build Command: `npm run build`
-- Output Directory: `dist`
+Set `OPENROUTER_API_KEY` in the Vercel project environment variables before deploying.
 
-Environment variable:
+## Notes
 
-```bash
-OPENROUTER_API_KEY=your_key_here
-```
-
-Do not use `VITE_OPENROUTER_API_KEY` in this project.
-
-## GitHub Upload
-
-1. Create a new empty GitHub repository.
-2. Open a terminal in this folder.
-3. Run:
-
-```bash
-git init
-git add .
-git commit -m "Initial Vercel-ready Ramani app"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
-
-4. Import that GitHub repo into Vercel and add `OPENROUTER_API_KEY` in the Vercel dashboard before deploying.
+- The model is `mistralai/ministral-14b-2512`.
+- OpenRouter is now called server-side through `api/chat.js`.
+- Appointment and vault edits are stored in browser local storage for demo purposes.

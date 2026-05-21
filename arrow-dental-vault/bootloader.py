@@ -13,7 +13,7 @@ load_dotenv()
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "x-ai/grok-4.1-fast"  # swap freely via OpenRouter
+MODEL = "mistralai/ministral-14b-2512"  # swap freely via OpenRouter
 
 # ─────────────────────────────────────────────
 # SESSION STATE

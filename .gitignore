@@ -8,3 +8,5 @@ dist/
 *.log
 arrow-dental-vault/__pycache__/
 arrow-dental-vault/scripts/__pycache__/
+
+.vercel

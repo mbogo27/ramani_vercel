@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ramani OS · arrow-dental-vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0d0d0f;
+  --bg2:#131318;
+  --bg3:#1a1a22;
+  --bg4:#22222e;
+  --border:#2a2a38;
+  --border2:#363648;
+  --text:#e8e8f0;
+  --text2:#8888aa;
+  --text3:#555570;
+  --primary:#F47C2C;
+  --primary-dark:#E46E1F;
+  --accent:#a78bfa;
+  --accent-dim:#6c5fa8;
+  --hot:#F47C2C;
+  --warm:#f0b429;
+  --cold:#5b8dee;
+  --success:#2E9E57;
+  --error:#D64545;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Poppins',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);}
+
+/* ─── TOP BAR ─── */
+.topbar{
+  height:48px;display:flex;align-items:center;
+  padding:0 20px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  gap:0;
+}
+.topbar-logo{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.3px;margin-right:10px;}
+.topbar-logo span{color:var(--text3);}
+.topbar-vault{font-family:var(--mono);font-size:11px;color:var(--accent-dim);margin-right:auto;}
+.topbar-tabs{display:flex;gap:0;height:100%;}
+.topbar-tab{
+  padding:0 18px;font-size:12px;font-weight:500;
+  color:var(--text2);cursor:pointer;border:none;background:none;
+  font-family:var(--sans);height:100%;
+  display:flex;align-items:center;
+  border-bottom:2px solid transparent;
+  transition:all 0.15s;
+}
+.topbar-tab:hover{color:var(--text);}
+.topbar-tab.active{
+  color:var(--bg);background:var(--primary);
+  border-radius:20px;margin:10px 6px;height:28px;
+  border-bottom:none;padding:0 16px;font-size:11px;font-weight:600;
+}
+
+/* ─── BREADCRUMB ─── */
+.breadcrumb{
+  position:fixed;top:48px;left:0;right:0;z-index:99;
+  height:28px;background:var(--bg);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 20px;
+  font-family:var(--mono);font-size:11px;color:var(--text3);
+  gap:6px;
+}
+.breadcrumb span{color:var(--accent);}
+.breadcrumb .sep{color:var(--text3);}
+
+/* ─── MAIN LAYOUT ─── */
+.shell{
+  display:flex;
+  margin-top:76px;
+  height:calc(100vh - 76px);
+}
+
+/* ─── PANELS ─── */
+.panel{display:none;width:100%;height:100%;}
+.panel.active{display:flex;}
+
+/* ═══════════════════════════════════════════
+   GRAPH PANEL
+═══════════════════════════════════════════ */
+.graph-panel{
+  display:flex;flex-direction:column;
+  width:100%;height:100%;
+  overflow:hidden;
+  position:relative;
+}
+#graph-canvas{width:100%;flex:1;}
+
+.graph-legend{
+  display:flex;align-items:center;gap:20px;
+  padding:10px 20px;
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  font-size:11px;color:var(--text2);
+  flex-wrap:wrap;
+}
+.legend-item{display:flex;align-items:center;gap:6px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;border:2px solid;}
+.legend-line{width:24px;height:2px;border-radius:1px;}
+
+/* ═══════════════════════════════════════════
+   WEBSITE PANEL
+═══════════════════════════════════════════ */
+.website-panel{display:flex;width:100%;height:100%;}
+.website-sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:16px 0;
+}
+.ws-brand{padding:0 16px 12px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.ws-brand-name{font-size:13px;font-weight:700;color:var(--primary);line-height:1.3;}
+.ws-brand-sub{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
+.ws-nav-item{
+  padding:8px 16px;cursor:pointer;
+  transition:background 0.15s;
+  border-left:2px solid transparent;
+}
+.ws-nav-item:hover{background:var(--bg3);}
+.ws-nav-item.active{background:var(--bg3);border-left-color:var(--primary);}
+.ws-nav-label{font-size:13px;font-weight:500;color:var(--text);}
+.ws-nav-back{font-size:10px;font-family:var(--mono);color:var(--text3);margin-top:2px;}
+.ws-nav-item.active .ws-nav-label{color:var(--primary);}
+
+.website-content{flex:1;overflow-y:auto;background:var(--bg);}
+
+/* Website pages */
+.ws-page{display:none;padding:40px 48px;max-width:900px;}
+.ws-page.active{display:block;}
+
+.ws-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--primary);text-transform:uppercase;margin-bottom:14px;}
+.ws-h1{font-size:48px;font-weight:700;line-height:1.05;color:var(--text);margin-bottom:16px;}
+.ws-h1 span{color:var(--primary);}
+.ws-h2{font-size:28px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.ws-h2 span{color:var(--primary);}
+.ws-body{font-size:15px;line-height:1.75;color:var(--text2);margin-bottom:24px;max-width:600px;}
+
+.ws-btn-row{display:flex;gap:12px;margin-bottom:40px;flex-wrap:wrap;}
+.ws-btn-primary{
+  background:var(--primary);color:white;
+  border:none;padding:13px 28px;
+  font-size:14px;font-weight:600;font-family:var(--sans);
+  border-radius:4px;cursor:pointer;transition:background 0.2s;
+}
+.ws-btn-primary:hover{background:var(--primary-dark);}
+.ws-btn-secondary{
+  background:transparent;color:var(--text);
+  border:1px solid var(--border2);padding:13px 28px;
+  font-size:14px;font-weight:500;font-family:var(--sans);
+  border-radius:4px;cursor:pointer;transition:all 0.2s;
+}
+.ws-btn-secondary:hover{border-color:var(--text2);}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:48px;}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px 16px;}
+.stat-card-num{font-size:28px;font-weight:700;color:var(--primary);}
+.stat-card-label{font-size:12px;color:var(--text2);margin-top:4px;}
+
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+.service-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;padding:20px;
+  transition:border-color 0.2s;
+}
+.service-card:hover{border-color:var(--border2);}
+.service-card-icon{font-size:22px;margin-bottom:10px;}
+.service-card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.service-card-body{font-size:12px;color:var(--text2);line-height:1.6;}
+.service-card-price{font-size:12px;color:var(--primary);font-weight:600;margin-top:10px;}
+
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+.team-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center;}
+.team-avatar{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--bg4);border:2px solid var(--border2);
+  margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:var(--primary);
+}
+.team-name{font-size:14px;font-weight:600;color:var(--text);}
+.team-role{font-size:12px;color:var(--text2);margin-top:3px;}
+
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+.price-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;padding:24px;
+  position:relative;transition:border-color 0.2s;
+}
+.price-card.featured{border-color:var(--primary);}
+.price-badge{
+  position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  background:var(--primary);color:white;
+  font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;
+}
+.price-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.price-amount{font-size:30px;font-weight:700;color:var(--primary);margin-bottom:4px;}
+.price-amount span{font-size:14px;color:var(--text2);}
+.price-desc{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.price-list{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.price-list li{font-size:12px;color:var(--text2);display:flex;gap:7px;}
+.price-list li::before{content:"✓";color:var(--success);font-weight:700;flex-shrink:0;}
+
+.reviews-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:40px;}
+.review-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;}
+.review-stars{color:var(--warm);font-size:13px;margin-bottom:8px;}
+.review-text{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:12px;font-style:italic;}
+.review-author{font-size:12px;font-weight:600;color:var(--text);}
+.review-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.review-score{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:6px;padding:8px 14px;margin-bottom:24px;
+}
+.review-score-num{font-size:24px;font-weight:700;color:var(--primary);}
+.review-score-label{font-size:12px;color:var(--text2);}
+
+/* Book Appointment - full form */
+.book-contact-row{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px;}
+.contact-info h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;}
+.contact-item{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start;}
+.contact-item-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.contact-item-text{font-size:13px;color:var(--text2);line-height:1.5;}
+.contact-item-label{font-size:11px;color:var(--text3);margin-bottom:1px;}
+
+.intake-form-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;padding:24px;
+}
+.form-section-label{
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text3);
+  margin-bottom:12px;font-family:var(--mono);
+}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:11px;font-weight:500;color:var(--text2);}
+.form-input,.form-select,.form-textarea{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:4px;padding:0 12px;
+  height:38px;font-size:13px;font-family:var(--sans);
+  color:var(--text);outline:none;
+  transition:border-color 0.2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);}
+.form-input::placeholder{color:var(--text3);}
+.form-textarea{height:72px;padding:10px 12px;resize:none;}
+.form-select option{background:var(--bg4);}
+.form-divider{height:1px;background:var(--border);margin:16px 0;}
+
+.form-submit-row{display:flex;align-items:center;gap:12px;margin-top:16px;}
+.toast-inline{
+  display:none;align-items:center;gap:7px;
+  font-size:12px;font-weight:500;
+  padding:7px 12px;border-radius:4px;
+}
+.toast-inline.show{display:flex;}
+.toast-success{background:rgba(46,158,87,0.15);color:var(--success);border:1px solid rgba(46,158,87,0.3);}
+.toast-info{background:rgba(244,124,44,0.1);color:var(--primary);border:1px solid rgba(244,124,44,0.25);}
+
+/* ═══════════════════════════════════════════
+   CONTENT GEN PANEL
+═══════════════════════════════════════════ */
+.content-panel{
+  display:flex;width:100%;height:100%;overflow:hidden;
+}
+.content-left{
+  width:320px;flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+.content-left-header{
+  padding:16px;border-bottom:1px solid var(--border);
+}
+.content-left-title{font-size:13px;font-weight:600;color:var(--text);}
+.content-left-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+
+.vault-ctx{
+  margin:12px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:6px;
+  padding:10px 12px;
+}
+.vault-ctx-label{font-size:9px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.vault-nodes{display:flex;flex-wrap:wrap;gap:5px;}
+.vault-node{
+  font-size:10px;font-family:var(--mono);
+  background:var(--bg4);border:1px solid var(--border2);
+  color:var(--accent-dim);padding:3px 8px;border-radius:3px;
+}
+
+.content-form{padding:12px;display:flex;flex-direction:column;gap:10px;}
+.content-textarea{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:4px;padding:10px 12px;
+  font-size:12px;font-family:var(--sans);color:var(--text);
+  outline:none;resize:none;height:80px;
+  transition:border-color 0.2s;
+}
+.content-textarea:focus{border-color:var(--primary);}
+.content-textarea::placeholder{color:var(--text3);}
+.content-select{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:4px;padding:0 10px;height:34px;
+  font-size:12px;font-family:var(--sans);color:var(--text);
+  outline:none;width:100%;
+}
+.content-select option{background:var(--bg4);}
+.content-form-label{font-size:10px;font-family:var(--mono);color:var(--text3);margin-bottom:3px;letter-spacing:0.5px;text-transform:uppercase;}
+.gen-btn{
+  background:var(--primary);color:white;
+  border:none;padding:10px;border-radius:4px;
+  font-size:13px;font-weight:600;font-family:var(--sans);
+  cursor:pointer;transition:background 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;
+}
+.gen-btn:hover{background:var(--primary-dark);}
+.gen-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+.upcoming-block{
+  margin:0 12px 12px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  padding:10px 12px;
+}
+.upcoming-title{font-size:9px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.upcoming-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 0;border-bottom:1px solid var(--border);
+}
+.upcoming-item:last-child{border-bottom:none;padding-bottom:0;}
+.upcoming-icon{
+  width:28px;height:28px;border-radius:5px;
+  background:var(--bg4);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.upcoming-name{font-size:11px;font-weight:600;color:var(--text);}
+.upcoming-desc{font-size:10px;color:var(--text3);margin-top:1px;}
+.upcoming-tag{
+  margin-left:auto;font-size:9px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;flex-shrink:0;
+}
+.tag-soon{background:rgba(167,139,250,0.15);color:var(--accent);}
+
+.content-right{
+  flex:1;overflow-y:auto;
+  padding:20px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.content-right-header{
+  font-size:10px;font-family:var(--mono);color:var(--text3);
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;
+}
+.output-placeholder{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;
+  color:var(--text3);font-size:13px;min-height:200px;
+  border:1px dashed var(--border);border-radius:8px;padding:40px;text-align:center;
+}
+.output-placeholder-sub{font-size:11px;font-family:var(--mono);}
+
+.output-post-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;padding:16px;
+}
+.output-post-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.platform-pill{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
+  padding:3px 9px;border-radius:3px;
+}
+.pill-ig{background:rgba(193,53,132,0.15);color:#c13584;}
+.pill-fb{background:rgba(24,119,242,0.15);color:#1877f2;}
+.pill-wa{background:rgba(37,211,102,0.15);color:#25d366;}
+.post-num{font-size:10px;color:var(--text3);font-family:var(--mono);}
+.copy-btn{
+  margin-left:auto;background:none;border:1px solid var(--border);
+  border-radius:3px;padding:3px 10px;font-size:10px;
+  font-family:var(--mono);color:var(--text2);cursor:pointer;
+  transition:all 0.15s;
+}
+.copy-btn:hover{border-color:var(--primary);color:var(--primary);}
+.output-post-text{font-size:13px;line-height:1.65;color:var(--text2);}
+.output-post-tags{font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);}
+
+/* ═══════════════════════════════════════════
+   AGENT / CHAT PANEL
+═══════════════════════════════════════════ */
+.agent-panel{
+  display:flex;width:100%;height:100%;
+}
+.agent-sidebar{
+  width:240px;flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  padding:16px;overflow-y:auto;
+}
+.agent-sidebar-title{font-size:11px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.agent-context-item{
+  background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  padding:10px;margin-bottom:8px;
+}
+.agent-ctx-label{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+.agent-ctx-val{font-size:11px;color:var(--text2);}
+.agent-ctx-nodes{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.agent-ctx-node{
+  font-size:9px;font-family:var(--mono);
+  background:var(--bg4);border:1px solid var(--border2);
+  color:var(--accent-dim);padding:2px 6px;border-radius:2px;
+}
+.partial-proj-label{
+  font-size:9px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;
+  color:var(--accent-dim);display:flex;align-items:center;gap:5px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;padding:6px 10px;margin-top:12px;
+}
+
+.agent-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.chat-messages{
+  flex:1;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.chat-input-area{
+  border-top:1px solid var(--border);
+  padding:12px;background:var(--bg2);
+  display:flex;gap:8px;
+}
+.chat-input{
+  flex:1;background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;padding:9px 14px;
+  font-size:13px;font-family:var(--sans);color:var(--text);outline:none;
+  transition:border-color 0.2s;
+}
+.chat-input:focus{border-color:var(--primary);}
+.chat-input::placeholder{color:var(--text3);}
+.send-btn{
+  background:var(--primary);color:white;border:none;
+  padding:9px 16px;border-radius:4px;font-size:12px;
+  font-weight:600;font-family:var(--sans);cursor:pointer;
+  transition:background 0.2s;white-space:nowrap;
+}
+.send-btn:hover{background:var(--primary-dark);}
+
+.msg{display:flex;flex-direction:column;max-width:80%;}
+.msg.user{align-self:flex-end;align-items:flex-end;}
+.msg.bot{align-self:flex-start;align-items:flex-start;}
+.msg-label{font-size:9px;font-family:var(--mono);color:var(--text3);margin-bottom:4px;letter-spacing:0.5px;}
+.msg-bubble{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.55;}
+.msg.user .msg-bubble{background:var(--primary);color:white;border-radius:10px 10px 2px 10px;}
+.msg.bot .msg-bubble{background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:10px 10px 10px 2px;}
+
+.projection-card{
+  background:var(--bg2);border:1.5px solid var(--primary);
+  border-radius:10px;padding:14px;margin-top:8px;width:280px;
+}
+.projection-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.projection-title{font-size:12px;font-weight:700;color:var(--primary);}
+.projection-tag{font-size:9px;font-family:var(--mono);background:rgba(244,124,44,0.15);color:var(--primary);padding:2px 7px;border-radius:3px;letter-spacing:0.5px;text-transform:uppercase;}
+.projection-row{display:flex;justify-content:space-between;margin-bottom:6px;}
+.projection-key{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.projection-val{font-size:11px;font-weight:600;color:var(--text);}
+.projection-divider{height:1px;background:var(--border);margin:10px 0;}
+.proj-actions{display:flex;gap:6px;}
+.proj-btn{
+  flex:1;padding:7px;border-radius:4px;font-size:11px;
+  font-weight:600;font-family:var(--sans);cursor:pointer;border:none;
+  transition:all 0.15s;text-align:center;
+}
+.proj-confirm{background:var(--primary);color:white;}
+.proj-confirm:hover{background:var(--primary-dark);}
+.proj-cancel{background:var(--bg4);color:var(--text2);border:1px solid var(--border);}
+.proj-cancel:hover{border-color:var(--border2);}
+
+.typing-indicator{
+  display:flex;align-items:center;gap:4px;
+  padding:10px 14px;background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px 10px 10px 2px;
+  width:fit-content;
+}
+.typing-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--text3);
+  animation:tdot 1.2s infinite;
+}
+.typing-dot:nth-child(2){animation-delay:0.2s;}
+.typing-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes tdot{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-4px);}}
+
+/* ─── SHARED UTILITIES ─── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 18px;border-radius:4px;font-size:13px;font-weight:600;
+  font-family:var(--sans);cursor:pointer;border:none;transition:all 0.2s;
+}
+.btn-primary{background:var(--primary);color:white;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text);}
+.btn-sm{padding:6px 13px;font-size:11px;}
+.spinner{
+  display:inline-block;width:13px;height:13px;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:white;
+  border-radius:50%;animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* scroll */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">Ramani <span>OS</span></div>
+  <div class="topbar-vault">arrow-dental-vault</div>
+  <div class="topbar-tabs">
+    <button class="topbar-tab active" onclick="switchPanel('graph')">Graph</button>
+    <button class="topbar-tab" onclick="switchPanel('website')">Website</button>
+    <button class="topbar-tab" onclick="switchPanel('content')">Content Gen</button>
+    <button class="topbar-tab" onclick="switchPanel('agent')">Agent</button>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb" id="breadcrumb">
+  surface <span class="sep">-&gt;</span> <span>hypergraph substrate</span>
+</div>
+
+<!-- MAIN SHELL -->
+<div class="shell">
+
+  <!-- ══════════ GRAPH ══════════ -->
+  <div class="panel active" id="panel-graph" style="flex-direction:column;">
+    <canvas id="graph-canvas"></canvas>
+    <div class="graph-legend">
+      <div class="legend-item"><div class="legend-dot" style="border-color:#F47C2C;background:rgba(244,124,44,0.2);"></div> hot node</div>
+      <div class="legend-item"><div class="legend-dot" style="border-color:#f0b429;background:rgba(240,180,41,0.2);"></div> warm node</div>
+      <div class="legend-item"><div class="legend-dot" style="border-color:#5b8dee;background:rgba(91,141,238,0.2);"></div> cold node</div>
+      <div class="legend-item" style="margin-left:10px;"><div class="legend-line" style="background:#5b5baa;opacity:0.7;border-top:2px dashed #5b5baa;background:none;"></div> patient_journey</div>
+      <div class="legend-item"><div class="legend-line" style="border-top:2px dashed #8b3030;"></div> brand_voice</div>
+      <div class="legend-item"><div class="legend-line" style="border-top:2px dashed #1e6b4a;"></div> intake_flow</div>
+    </div>
+  </div>
+
+  <!-- ══════════ WEBSITE ══════════ -->
+  <div class="panel" id="panel-website">
+    <div class="website-sidebar">
+      <div class="ws-brand">
+        <div class="ws-brand-name">Arrow Dental Centre</div>
+        <div class="ws-brand-sub">multi-branch | Nairobi CBD + Thika</div>
+      </div>
+      <div class="ws-nav-item active" onclick="switchWsPage('home',this)">
+        <div class="ws-nav-label">Home</div>
+        <div class="ws-nav-back">&lt;- brand, trust</div>
+      </div>
+      <div class="ws-nav-item" onclick="switchWsPage('services',this)">
+        <div class="ws-nav-label">Services</div>
+        <div class="ws-nav-back">&lt;- treatments</div>
+      </div>
+      <div class="ws-nav-item" onclick="switchWsPage('team',this)">
+        <div class="ws-nav-label">Our team</div>
+        <div class="ws-nav-back">&lt;- team</div>
+      </div>
+      <div class="ws-nav-item" onclick="switchWsPage('pricing',this)">
+        <div class="ws-nav-label">Pricing</div>
+        <div class="ws-nav-back">&lt;- pricing</div>
+      </div>
+      <div class="ws-nav-item" onclick="switchWsPage('reviews',this)">
+        <div class="ws-nav-label">Reviews</div>
+        <div class="ws-nav-back">&lt;- patient_trust</div>
+      </div>
+      <div class="ws-nav-item" onclick="switchWsPage('book',this)">
+        <div class="ws-nav-label">Book now</div>
+        <div class="ws-nav-back">&lt;- booking, location</div>
+      </div>
+    </div>
+    <div class="website-content">
+
+      <!-- HOME -->
+      <div class="ws-page active" id="ws-home">
+        <div class="ws-eyebrow">Arrow Dental Centre | Multi-Branch Kenya</div>
+        <div class="ws-h1">Sharpening <span>Smiles.</span><br/>Touching Lives.</div>
+        <div class="ws-body">Walk-in friendly dental care across Nairobi CBD, Thika Road, and Thika Town. Modern treatment, wide insurance acceptance, and a warm team built for routine care, pain relief, and long-term smile confidence.</div>
+        <div class="ws-btn-row">
+          <button class="ws-btn-primary" onclick="switchWsPage('book',document.querySelectorAll('.ws-nav-item')[5])">WhatsApp to book</button>
+          <button class="ws-btn-secondary" onclick="switchWsPage('services',document.querySelectorAll('.ws-nav-item')[1])">Explore treatments</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-card-num">15 years</div><div class="stat-card-label">in practice</div></div>
+          <div class="stat-card"><div class="stat-card-num">30+</div><div class="stat-card-label">dental professionals</div></div>
+          <div class="stat-card"><div class="stat-card-num">150,000+</div><div class="stat-card-label">patients served</div></div>
+          <div class="stat-card"><div class="stat-card-num">4 clinics</div><div class="stat-card-label">across CBD and Thika</div></div>
+        </div>
+        <div class="ws-h2">Why patients <span>choose us</span></div>
+        <div class="services-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="service-card"><div class="service-card-icon">🦷</div><div class="service-card-title">Pain-free treatments</div><div class="service-card-body">Modern equipment and gentle technique — most patients describe our procedures as comfortable and quick.</div></div>
+          <div class="service-card"><div class="service-card-icon">🏥</div><div class="service-card-title">Insurance accepted</div><div class="service-card-body">We work with NHIF, AAR, Jubilee, CIC, Madison, APA, and 15+ other providers.</div></div>
+          <div class="service-card"><div class="service-card-icon">👨‍👩‍👧</div><div class="service-card-title">Family-oriented care</div><div class="service-card-body">From first milk teeth to orthodontics to implants — we treat every generation under one roof.</div></div>
+          <div class="service-card"><div class="service-card-icon">📍</div><div class="service-card-title">Walk-in friendly</div><div class="service-card-body">No appointment? No problem. We accommodate same-day visits at all locations.</div></div>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="ws-page" id="ws-services">
+        <div class="ws-eyebrow">Treatment Catalogue</div>
+        <div class="ws-h1">Our <span>Services</span></div>
+        <div class="ws-body">Comprehensive dental care from prevention to restoration, delivered by specialists who put you at ease.</div>
+        <div class="services-grid">
+          <div class="service-card"><div class="service-card-icon">🔍</div><div class="service-card-title">General Checkup</div><div class="service-card-body">Full oral examination, X-rays, and personalised care plan. Recommended every 6 months.</div><div class="service-card-price">From KES 1,500</div></div>
+          <div class="service-card"><div class="service-card-icon">✨</div><div class="service-card-title">Teeth Cleaning</div><div class="service-card-body">Professional scaling and polishing. Removes plaque, tartar, and surface staining.</div><div class="service-card-price">From KES 2,000</div></div>
+          <div class="service-card"><div class="service-card-icon">💎</div><div class="service-card-title">Teeth Whitening</div><div class="service-card-body">Clinical-grade whitening for up to 8 shades brighter in a single session.</div><div class="service-card-price">From KES 8,000</div></div>
+          <div class="service-card"><div class="service-card-icon">🦷</div><div class="service-card-title">Root Canal</div><div class="service-card-body">Save an infected tooth. Modern endodontics with minimal discomfort and fast recovery.</div><div class="service-card-price">From KES 12,000</div></div>
+          <div class="service-card"><div class="service-card-icon">😬</div><div class="service-card-title">Braces & Orthodontics</div><div class="service-card-body">Metal, ceramic, and clear aligners for children and adults. Free initial consultation.</div><div class="service-card-price">From KES 45,000</div></div>
+          <div class="service-card"><div class="service-card-icon">🚨</div><div class="service-card-title">Emergency Care</div><div class="service-card-body">Severe pain, broken teeth, trauma — we prioritise emergency cases with same-day slots.</div><div class="service-card-price">From KES 2,500</div></div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="ws-page" id="ws-team">
+        <div class="ws-eyebrow">Clinical Team</div>
+        <div class="ws-h1">Meet the <span>Team</span></div>
+        <div class="ws-body">Board-certified dentists and specialists committed to gentle, effective care. Over 120 combined years of clinical experience.</div>
+        <div class="team-grid">
+          <div class="team-card"><div class="team-avatar">DK</div><div class="team-name">Dr. K. Kamau</div><div class="team-role">Lead Dentist · Nairobi CBD</div></div>
+          <div class="team-card"><div class="team-avatar">DO</div><div class="team-name">Dr. A. Ochieng</div><div class="team-role">Orthodontist</div></div>
+          <div class="team-card"><div class="team-avatar">DM</div><div class="team-name">Dr. P. Mwangi</div><div class="team-role">Oral Surgeon</div></div>
+          <div class="team-card"><div class="team-avatar">DN</div><div class="team-name">Dr. C. Njeru</div><div class="team-role">Paediatric Dentist</div></div>
+          <div class="team-card"><div class="team-avatar">DW</div><div class="team-name">Dr. L. Wanjiru</div><div class="team-role">Endodontist · Thika</div></div>
+          <div class="team-card"><div class="team-avatar">DO</div><div class="team-name">Dr. M. Otieno</div><div class="team-role">Prosthodontist</div></div>
+        </div>
+      </div>
+
+      <!-- PRICING -->
+      <div class="ws-page" id="ws-pricing">
+        <div class="ws-eyebrow">Transparent Pricing</div>
+        <div class="ws-h1">Simple, <span>honest</span> fees</div>
+        <div class="ws-body">No surprise costs. All pricing is shown upfront. NHIF and major insurance covers most routine treatments.</div>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-name">Preventive</div>
+            <div class="price-amount">KES 1,500 <span>/ visit</span></div>
+            <div class="price-desc">Routine care and prevention</div>
+            <ul class="price-list">
+              <li>Full oral examination</li>
+              <li>X-rays included</li>
+              <li>Scaling & polishing</li>
+              <li>Personalised care plan</li>
+            </ul>
+          </div>
+          <div class="price-card featured">
+            <div class="price-badge">Most popular</div>
+            <div class="price-name">Restorative</div>
+            <div class="price-amount">KES 5,000 <span>/ treatment</span></div>
+            <div class="price-desc">Fillings, crowns, and repairs</div>
+            <ul class="price-list">
+              <li>Composite fillings</li>
+              <li>Ceramic crowns</li>
+              <li>Root canal therapy</li>
+              <li>Follow-up included</li>
+            </ul>
+          </div>
+          <div class="price-card">
+            <div class="price-name">Cosmetic</div>
+            <div class="price-amount">KES 8,000 <span>/ session</span></div>
+            <div class="price-desc">Whitening and aesthetics</div>
+            <ul class="price-list">
+              <li>Clinical whitening</li>
+              <li>Veneers consultation</li>
+              <li>Smile design</li>
+              <li>Before & after photos</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="ws-page" id="ws-reviews">
+        <div class="ws-eyebrow">Patient Feedback</div>
+        <div class="ws-h1">What patients <span>say</span></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <div class="review-score">
+            <div class="review-score-num">4.9</div>
+            <div class="review-score-label">⭐⭐⭐⭐⭐<br/><span style="font-size:10px;color:var(--text3);">247 reviews · Google</span></div>
+          </div>
+        </div>
+        <div class="reviews-grid">
+          <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"Came in with a severe toothache on a Monday morning with no appointment. They saw me within 30 minutes. The root canal was virtually painless. Arrow Dental is now our family dentist."</div><div class="review-author">Mary W.</div><div class="review-meta">Nairobi CBD · Returning patient</div></div>
+          <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"My daughter has been terrified of dentists since she was small. Dr. Njeru completely changed that. She actually asked to come back. That says everything."</div><div class="review-author">James O.</div><div class="review-meta">Thika Road · Parent</div></div>
+          <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"Used my NHIF card and paid almost nothing for a full cleaning and checkup. Clean facility, modern equipment, and the staff make you feel genuinely welcome."</div><div class="review-author">Grace M.</div><div class="review-meta">Thika Town · New patient</div></div>
+          <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"The braces consultation was thorough — they showed me 3D models of how my teeth would move. Started treatment last month and already seeing movement. Very impressed."</div><div class="review-author">Brian K.</div><div class="review-meta">Nairobi CBD · Orthodontics</div></div>
+          <div class="review-card"><div class="review-stars">★★★★☆</div><div class="review-text">"Whitening results were excellent. About 6 shades brighter in one session. The only reason for 4 stars is the wait time — about 40 minutes past my appointment. Still, results speak for themselves."</div><div class="review-author">Diana N.</div><div class="review-meta">Thika Road · Cosmetic</div></div>
+          <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"I've been to 4 dentists in Nairobi over the years. Arrow is the best by a wide margin — in terms of equipment, staff knowledge, cleanliness, and patient communication. Highly recommend."</div><div class="review-author">Samuel A.</div><div class="review-meta">Nairobi CBD · Long-term patient</div></div>
+        </div>
+      </div>
+
+      <!-- BOOK NOW -->
+      <div class="ws-page" id="ws-book">
+        <div class="ws-eyebrow">Book an Appointment</div>
+        <div class="ws-h1">Visit <span>Arrow Dental</span></div>
+        <div class="book-contact-row">
+          <div class="contact-info">
+            <h3>Our locations</h3>
+            <div class="contact-item"><div class="contact-item-icon">📍</div><div><div class="contact-item-label">Nairobi CBD</div><div class="contact-item-text">Kimathi Street, Rehema House 3rd Floor<br/>Mon–Sat 8am–6pm</div></div></div>
+            <div class="contact-item"><div class="contact-item-icon">📍</div><div><div class="contact-item-label">Thika Road</div><div class="contact-item-text">Roysambu, 2nd Avenue Plaza<br/>Mon–Sat 8am–6pm</div></div></div>
+            <div class="contact-item"><div class="contact-item-icon">📍</div><div><div class="contact-item-label">Thika Town</div><div class="contact-item-text">Kenyatta Avenue, Thika Mall<br/>Mon–Fri 8am–5pm</div></div></div>
+            <div style="margin-top:16px;">
+              <div class="contact-item"><div class="contact-item-icon">📞</div><div><div class="contact-item-label">Phone / WhatsApp</div><div class="contact-item-text">+254 700 123 456</div></div></div>
+              <div class="contact-item"><div class="contact-item-icon">✉️</div><div><div class="contact-item-label">Email</div><div class="contact-item-text">hello@arrowdental.co.ke</div></div></div>
+            </div>
+          </div>
+          <div>
+            <div class="intake-form-card">
+              <div class="form-section-label">Patient details</div>
+              <div class="form-grid-2">
+                <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="b-first" placeholder="Amara" /></div>
+                <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="b-last" placeholder="Mwangi" /></div>
+                <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="b-phone" placeholder="+254 700 000 000" /></div>
+                <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="b-email" type="email" placeholder="amara@email.com" /></div>
+              </div>
+              <div class="form-divider"></div>
+              <div class="form-section-label">Appointment details</div>
+              <div class="form-grid-2">
+                <div class="form-group"><label class="form-label">Branch</label>
+                  <select class="form-select" id="b-branch">
+                    <option value="">Select branch</option>
+                    <option>Nairobi CBD</option><option>Thika Road</option><option>Thika Town</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Service</label>
+                  <select class="form-select" id="b-service">
+                    <option value="">Select service</option>
+                    <option>General Checkup</option><option>Teeth Cleaning</option><option>Whitening</option>
+                    <option>Root Canal</option><option>Braces Consultation</option><option>Extraction</option><option>Emergency</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Preferred Date</label><input class="form-input" id="b-date" type="date" /></div>
+                <div class="form-group"><label class="form-label">Preferred Time</label>
+                  <select class="form-select" id="b-time">
+                    <option value="">Select time</option>
+                    <option>8:00 AM</option><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option>
+                    <option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Patient type</label>
+                  <select class="form-select" id="b-ptype">
+                    <option>New Patient</option><option>Returning Patient</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Insurance</label>
+                  <select class="form-select" id="b-insurance">
+                    <option value="">None / self-pay</option>
+                    <option>NHIF</option><option>AAR</option><option>Jubilee</option><option>CIC</option><option>Madison</option><option>Other</option>
+                  </select>
+                </div>
+                <div class="form-group full"><label class="form-label">Notes / symptoms</label>
+                  <textarea class="form-textarea" id="b-notes" placeholder="Any concerns, pain areas, or special requirements…"></textarea>
+                </div>
+              </div>
+              <div class="form-submit-row">
+                <button class="btn btn-primary btn-sm" onclick="submitBookingForm()">Confirm Appointment</button>
+                <button class="btn btn-ghost btn-sm" onclick="prefillBooking()">Demo fill</button>
+                <div class="toast-inline toast-success" id="book-toast">✓ Saved to SQLite · Vault node updated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <div style="font-size:11px;font-family:var(--mono);color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">SQLite · appointments table</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <div style="display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:8px;">
+              <span style="font-size:11px;font-family:var(--mono);color:var(--text3);">appointments</span>
+              <div style="display:flex;gap:12px;margin-left:16px;">
+                <span style="font-size:11px;color:var(--text2);">Total: <b id="st-total" style="color:var(--primary);">0</b></span>
+                <span style="font-size:11px;color:var(--text2);">New: <b id="st-new" style="color:var(--warm);">0</b></span>
+              </div>
+              <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="clearBookings()">Clear</button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table id="records-table" style="width:100%;border-collapse:collapse;font-size:11px;">
+                <thead><tr style="border-bottom:1px solid var(--border);">
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">ID</th>
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Name</th>
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Service</th>
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Date</th>
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Branch</th>
+                  <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Source</th>
+                </tr></thead>
+                <tbody id="records-body">
+                  <tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px;">no records yet — submit the form or use the agent</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- website-content -->
+  </div><!-- website panel -->
+
+  <!-- ══════════ CONTENT GEN ══════════ -->
+  <div class="panel" id="panel-content">
+    <div class="content-left">
+      <div class="content-left-header">
+        <div class="content-left-title">Content Generator</div>
+        <div class="content-left-sub">Vault-grounded · Arrow Dental</div>
+      </div>
+      <div class="vault-ctx">
+        <div class="vault-ctx-label">⬡ active vault context</div>
+        <div class="vault-nodes">
+          <span class="vault-node">[[brand-voice]]</span>
+          <span class="vault-node">[[services]]</span>
+          <span class="vault-node">[[testimonials]]</span>
+          <span class="vault-node">[[design-system]]</span>
+          <span class="vault-node">[[promotions]]</span>
+          <span class="vault-node">[[pricing]]</span>
+        </div>
+      </div>
+      <div class="content-form">
+        <div>
+          <div class="content-form-label">Describe what you need</div>
+          <textarea class="content-textarea" id="content-prompt" placeholder="e.g. 2 Instagram posts promoting teeth whitening, family-friendly tone with a promo offer for June"></textarea>
+        </div>
+        <div>
+          <div class="content-form-label">Platform</div>
+          <select class="content-select" id="content-platform">
+            <option value="instagram">Instagram</option>
+            <option value="facebook">Facebook</option>
+            <option value="whatsapp">WhatsApp Broadcast</option>
+          </select>
+        </div>
+        <div>
+          <div class="content-form-label">Tone</div>
+          <select class="content-select" id="content-tone">
+            <option>Warm &amp; friendly</option>
+            <option>Professional</option>
+            <option>Urgent / promotional</option>
+            <option>Educational</option>
+          </select>
+        </div>
+        <button class="gen-btn" id="gen-btn" onclick="generateContent()">
+          ✦ Generate from Vault
+        </button>
+      </div>
+      <div class="upcoming-block">
+        <div class="upcoming-title">⬡ upcoming features</div>
+        <div class="upcoming-item">
+          <div class="upcoming-icon">🎬</div>
+          <div>
+            <div class="upcoming-name">HyperFrames Video</div>
+            <div class="upcoming-desc">HTML → deterministic video via HeyGen OSS</div>
+          </div>
+          <div class="upcoming-tag tag-soon">Soon</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-icon">🖼️</div>
+          <div>
+            <div class="upcoming-name">Image Generation</div>
+            <div class="upcoming-desc">On-brand visuals from vault context</div>
+          </div>
+          <div class="upcoming-tag tag-soon">Soon</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-icon">📁</div>
+          <div>
+            <div class="upcoming-name">Media Assets in Ramani</div>
+            <div class="upcoming-desc">Image nodes as first-class vault objects</div>
+          </div>
+          <div class="upcoming-tag tag-soon">Roadmap</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-right">
+      <div class="content-right-header">generated output</div>
+      <div class="output-placeholder" id="content-output-placeholder">
+        <span style="font-size:22px;">✦</span>
+        <span>Vault output appears here</span>
+        <span class="output-placeholder-sub">describe your content need and hit generate</span>
+      </div>
+      <div id="content-posts" style="display:none;flex-direction:column;gap:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ AGENT ══════════ -->
+  <div class="panel" id="panel-agent">
+    <div class="agent-sidebar">
+      <div class="agent-sidebar-title">Agent context</div>
+      <div class="agent-context-item">
+        <div class="agent-ctx-label">vault</div>
+        <div class="agent-ctx-val" style="font-family:var(--mono);font-size:10px;color:var(--accent-dim);">arrow-dental-vault</div>
+      </div>
+      <div class="agent-context-item">
+        <div class="agent-ctx-label">active nodes</div>
+        <div class="agent-ctx-nodes">
+          <span class="agent-ctx-node">[[booking]]</span>
+          <span class="agent-ctx-node">[[services]]</span>
+          <span class="agent-ctx-node">[[pricing]]</span>
+          <span class="agent-ctx-node">[[brand-voice]]</span>
+          <span class="agent-ctx-node">[[insurance]]</span>
+        </div>
+      </div>
+      <div class="agent-context-item">
+        <div class="agent-ctx-label">thermal state</div>
+        <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
+          <span style="font-size:10px;font-family:var(--mono);padding:2px 7px;border-radius:3px;background:rgba(244,124,44,0.15);color:var(--hot);">booking · hot</span>
+          <span style="font-size:10px;font-family:var(--mono);padding:2px 7px;border-radius:3px;background:rgba(240,180,41,0.15);color:var(--warm);">services · warm</span>
+        </div>
+      </div>
+      <div class="partial-proj-label">⬡ partial projections enabled</div>
+    </div>
+    <div class="agent-main">
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg bot">
+          <div class="msg-label">ARROW AI · RAMANI-GROUNDED</div>
+          <div class="msg-bubble">Hi! I'm the Arrow Dental assistant. I can help you book an appointment, answer questions about our services, pricing, insurance, or locations. What do you need today?</div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input class="chat-input" id="chat-input" placeholder="Try: 'I need a checkup this Friday' or 'what does whitening cost?'" onkeydown="if(event.key==='Enter')sendChat()" />
+        <button class="send-btn" onclick="sendChat()">Send ↑</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- shell -->
+
+<script>
+// ─── STATE ───
+const db = { records:[], nextId:1 };
+const chatState = { step:0, intake:{}, awaitingConfirm:false };
+
+// ─── PANEL SWITCHING ───
+const crumbs = {
+  graph: 'surface -> <span>hypergraph substrate</span>',
+  website: 'surface -> <span>project_nav()</span> -> <span>5 pages</span>',
+  content: 'surface -> <span>content_gen()</span> -> vault · arrow-dental',
+  agent: 'surface -> <span>agent()</span> -> ramani-grounded · partial projections on'
+};
+function switchPanel(name){
+  document.querySelectorAll('.topbar-tab').forEach((t,i)=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const idx = ['graph','website','content','agent'].indexOf(name);
+  document.querySelectorAll('.topbar-tab')[idx].classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('breadcrumb').innerHTML = crumbs[name];
+  if(name==='graph') initGraph();
+}
+
+// ─── WEBSITE NAV ───
+function switchWsPage(page, el){
+  document.querySelectorAll('.ws-nav-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('.ws-page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('ws-'+page).classList.add('active');
+  if(el) el.classList.add('active');
+  // Update breadcrumb
+  document.getElementById('breadcrumb').innerHTML = `surface -> <span>project_nav()</span> -> <span>${page}</span>`;
+}
+
+// ─── BOOKING FORM ───
+function prefillBooking(){
+  document.getElementById('b-first').value='Amara';
+  document.getElementById('b-last').value='Mwangi';
+  document.getElementById('b-phone').value='+254 722 334 455';
+  document.getElementById('b-email').value='amara@gmail.com';
+  document.getElementById('b-branch').value='Nairobi CBD';
+  document.getElementById('b-service').value='Teeth Cleaning';
+  document.getElementById('b-date').value=new Date(Date.now()+86400000*2).toISOString().split('T')[0];
+  document.getElementById('b-time').value='10:00 AM';
+  document.getElementById('b-notes').value='Mild sensitivity upper left molar';
+}
+function submitBookingForm(){
+  const first=document.getElementById('b-first').value.trim();
+  const last=document.getElementById('b-last').value.trim();
+  const service=document.getElementById('b-service').value;
+  const date=document.getElementById('b-date').value;
+  const time=document.getElementById('b-time').value;
+  if(!first||!last||!service||!date||!time){alert('Please fill in name, service, date, and time.');return;}
+  const r={
+    id:db.nextId++,name:first+' '+last,
+    phone:document.getElementById('b-phone').value,
+    email:document.getElementById('b-email').value,
+    service,date,time,
+    branch:document.getElementById('b-branch').value||'Nairobi CBD',
+    ptype:document.getElementById('b-ptype').value,
+    insurance:document.getElementById('b-insurance').value,
+    notes:document.getElementById('b-notes').value,
+    source:'form',createdAt:new Date().toISOString()
+  };
+  db.records.push(r);
+  renderRecords();
+  const t=document.getElementById('book-toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function clearBookings(){db.records=[];db.nextId=1;renderRecords();}
+function renderRecords(){
+  document.getElementById('st-total').textContent=db.records.length;
+  document.getElementById('st-new').textContent=db.records.filter(r=>r.ptype==='New Patient').length;
+  const tbody=document.getElementById('records-body');
+  if(!db.records.length){
+    tbody.innerHTML='<tr><td colspan="6" style="padding:16px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px;">no records yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML=db.records.map(r=>`
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-family:var(--mono);color:var(--primary);font-weight:600;">#${r.id}</td>
+      <td style="padding:8px 12px;font-weight:500;color:var(--text);">${r.name}</td>
+      <td style="padding:8px 12px;color:var(--text2);">${r.service}</td>
+      <td style="padding:8px 12px;font-family:var(--mono);color:var(--text2);font-size:10px;">${r.date||'—'}</td>
+      <td style="padding:8px 12px;color:var(--text2);">${r.branch||'—'}</td>
+      <td style="padding:8px 12px;">
+        <span style="font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;${r.source==='chat'?'background:rgba(46,158,87,0.15);color:#2E9E57;':'background:rgba(107,61,22,0.2);color:#d48a4e;'}">${r.source}</span>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ─── GRAPH ───
+let graphInited=false;
+function initGraph(){
+  if(graphInited)return;
+  graphInited=true;
+  const canvas=document.getElementById('graph-canvas');
+  const ctx=canvas.getContext('2d');
+  function resize(){
+    const p=canvas.parentElement;
+    canvas.width=p.clientWidth;
+    canvas.height=p.clientHeight - 44;
+  }
+  resize();
+  window.addEventListener('resize',()=>{resize();drawGraph();});
+
+  const nodes=[
+    {id:'treatments',label:'Treatments',temp:'hot',x:0.38,y:0.22},
+    {id:'patient_trust',label:'Patient trust',temp:'hot',x:0.75,y:0.22},
+    {id:'brand',label:'Brand identity',temp:'hot',x:0.58,y:0.42},
+    {id:'pricing',label:'Pricing',temp:'warm',x:0.3,y:0.58},
+    {id:'clinical',label:'Clinical team',temp:'warm',x:0.8,y:0.58},
+    {id:'booking',label:'Booking',temp:'warm',x:0.6,y:0.68},
+    {id:'location',label:'Location',temp:'cold',x:0.4,y:0.82},
+    {id:'insurance',label:'Insurance',temp:'cold',x:0.74,y:0.82},
+  ];
+
+  const hyperedges=[
+    {id:'patient_journey',nodes:['treatments','patient_trust','brand','clinical'],color:'rgba(80,80,170,0.18)',stroke:'#5b5baa'},
+    {id:'brand_voice',nodes:['brand','patient_trust','clinical'],color:'rgba(140,40,40,0.15)',stroke:'#8b3030'},
+    {id:'intake_flow',nodes:['booking','pricing','location','insurance'],color:'rgba(20,90,60,0.15)',stroke:'#1e6b4a'},
+  ];
+
+  const tempColors={
+    hot:{fill:'rgba(244,124,44,0.18)',stroke:'#F47C2C'},
+    warm:{fill:'rgba(240,180,41,0.18)',stroke:'#f0b429'},
+    cold:{fill:'rgba(91,141,238,0.18)',stroke:'#5b8dee'},
+  };
+
+  // label offsets for edges
+  const edgeLabels=[
+    {edge:'patient_journey',between:['brand','patient_trust'],label:'patient_journey'},
+    {edge:'brand_voice',between:['brand','clinical'],label:'brand_voice'},
+    {edge:'intake_flow',between:['booking','location'],label:'intake_flow'},
+  ];
+
+  let t=0;
+  function drawGraph(){
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Map node positions
+    const mapped=nodes.map(n=>({...n,px:n.x*W,py:n.y*H}));
+    const byId=Object.fromEntries(mapped.map(n=>[n.id,n]));
+
+    // Draw hyperedge polygons
+    hyperedges.forEach(he=>{
+      const pts=he.nodes.map(id=>byId[id]).filter(Boolean);
+      if(pts.length<2)return;
+      // convex hull approx: sort by angle from centroid
+      const cx=pts.reduce((s,p)=>s+p.px,0)/pts.length;
+      const cy=pts.reduce((s,p)=>s+p.py,0)/pts.length;
+      const sorted=[...pts].sort((a,b)=>Math.atan2(a.py-cy,a.px-cx)-Math.atan2(b.py-cy,b.px-cx));
+      // subtle pulse
+      const pulse=Math.sin(t*0.03+he.nodes.length)*0.5+0.5;
+      ctx.save();
+      ctx.beginPath();
+      sorted.forEach((p,i)=>i===0?ctx.moveTo(p.px,p.py):ctx.lineTo(p.px,p.py));
+      ctx.closePath();
+      ctx.fillStyle=he.color;
+      ctx.fill();
+      ctx.strokeStyle=he.stroke;
+      ctx.lineWidth=1;
+      ctx.setLineDash([6,5]);
+      ctx.globalAlpha=0.5+pulse*0.2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // edge lines between nodes
+      pts.forEach((a,i)=>{
+        pts.slice(i+1).forEach(b=>{
+          ctx.beginPath();
+          ctx.moveTo(a.px,a.py);
+          ctx.lineTo(b.px,b.py);
+          ctx.strokeStyle=he.stroke;
+          ctx.lineWidth=0.7;
+          ctx.globalAlpha=0.3;
+          ctx.stroke();
+          ctx.globalAlpha=1;
+        });
+      });
+    });
+
+    // Edge labels
+    edgeLabels.forEach(el=>{
+      const [a,b]=[byId[el.between[0]],byId[el.between[1]]];
+      if(!a||!b)return;
+      const mx=(a.px+b.px)/2+10, my=(a.py+b.py)/2;
+      const he=hyperedges.find(h=>h.id===el.edge);
+      ctx.font='11px "JetBrains Mono",monospace';
+      ctx.fillStyle=he?he.stroke:'#888';
+      ctx.globalAlpha=0.6;
+      ctx.fillText(el.label,mx,my);
+      ctx.globalAlpha=1;
+    });
+
+    // Draw nodes
+    mapped.forEach(n=>{
+      const tc=tempColors[n.temp];
+      const pulse=Math.sin(t*0.04+n.px*0.01)*2;
+      const r=22+pulse*0.3;
+      // outer ring
+      ctx.beginPath();
+      ctx.arc(n.px,n.py,r,0,Math.PI*2);
+      ctx.fillStyle=tc.fill;
+      ctx.fill();
+      ctx.strokeStyle=tc.stroke;
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+      // inner dot
+      ctx.beginPath();
+      ctx.arc(n.px,n.py,6,0,Math.PI*2);
+      ctx.fillStyle=tc.stroke;
+      ctx.fill();
+      // label
+      ctx.font='13px "Poppins",sans-serif';
+      ctx.fillStyle='#e8e8f0';
+      ctx.textAlign='center';
+      ctx.fillText(n.label,n.px,n.py-r-7);
+    });
+  }
+
+  function animate(){requestAnimationFrame(animate);t++;drawGraph();}
+  animate();
+}
+
+// ─── CONTENT GEN ───
+async function generateContent(){
+  const prompt=document.getElementById('content-prompt').value.trim();
+  const platform=document.getElementById('content-platform').value;
+  const tone=document.getElementById('content-tone').value;
+  if(!prompt){alert('Describe what content you need.');return;}
+  const btn=document.getElementById('gen-btn');
+  btn.innerHTML='<span class="spinner"></span> Querying vault…';
+  btn.disabled=true;
+  const pMap={instagram:'Instagram',facebook:'Facebook',whatsapp:'WhatsApp Broadcast'};
+  const pClass={instagram:'pill-ig',facebook:'pill-fb',whatsapp:'pill-wa'};
+  const postsEl=document.getElementById('content-posts');
+  const placEl=document.getElementById('content-output-placeholder');
+  postsEl.style.display='none';
+  placEl.style.display='flex';
+  placEl.innerHTML='<span class="spinner" style="width:18px;height:18px;border-color:rgba(255,255,255,0.2);border-top-color:var(--primary);"></span><span style="color:var(--text2);font-size:13px;">Traversing vault nodes…</span>';
+
+  const sys=`You are the content writer for Arrow Dental, a Nairobi-based multi-branch dental clinic.
+Brand: warm, trustworthy, professional, family-oriented. Tagline: "Sharpening smiles. Touching lives."
+Vault context: services (checkup KES 1500, cleaning KES 2000, whitening KES 8000, root canal KES 12000, braces KES 45000), locations (Nairobi CBD, Thika Road, Thika Town), insurance (NHIF, AAR, Jubilee, CIC, Madison).
+Tone: ${tone}. Platform: ${pMap[platform]}.
+Generate exactly 2 posts. Each distinct. Match platform style. End with a CTA.
+Return ONLY a JSON array, no markdown, no explanation: [{"post":"...","hashtags":"..."},{"post":"...","hashtags":"..."}]`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:sys,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const raw=data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    const posts=JSON.parse(raw);
+    placEl.style.display='none';
+    postsEl.style.display='flex';
+    postsEl.innerHTML=posts.map((p,i)=>`
+      <div class="output-post-card">
+        <div class="output-post-header">
+          <span class="platform-pill ${pClass[platform]}">${pMap[platform]}</span>
+          <span class="post-num">post_${i+1}</span>
+          <button class="copy-btn" onclick="copyPost(this,'${(p.post+(p.hashtags?' '+p.hashtags:'')).replace(/'/g,"&#39;").replace(/\n/g,' ')}')">copy</button>
+        </div>
+        <div class="output-post-text">${p.post.replace(/\n/g,'<br/>')}</div>
+        ${p.hashtags?`<div class="output-post-tags">${p.hashtags}</div>`:''}
+      </div>
+    `).join('');
+  }catch(e){
+    placEl.style.display='flex';
+    placEl.innerHTML=`<span style="color:var(--error);font-size:12px;">Generation error: ${e.message}</span><span class="output-placeholder-sub">API key required for live generation</span>`;
+    postsEl.style.display='none';
+  }
+  btn.innerHTML='✦ Generate from Vault';
+  btn.disabled=false;
+}
+function copyPost(btn,text){
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='copied ✓';
+    setTimeout(()=>btn.textContent='copy',2000);
+  });
+}
+
+// ─── CHAT / AGENT ───
+function appendMsg(role,content,isProjection){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg '+role;
+  if(isProjection){
+    const lbl=document.createElement('div');lbl.className='msg-label';lbl.textContent='ARROW AI · PARTIAL PROJECTION';
+    div.appendChild(lbl);div.appendChild(content);
+  }else{
+    if(role==='bot'){const lbl=document.createElement('div');lbl.className='msg-label';lbl.textContent='ARROW AI · RAMANI-GROUNDED';div.appendChild(lbl);}
+    const bub=document.createElement('div');bub.className='msg-bubble';bub.textContent=content;div.appendChild(bub);
+  }
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;
+}
+function showTyping(){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');div.className='msg bot';div.id='typing-ind';
+  const ind=document.createElement('div');ind.className='typing-indicator';
+  [1,2,3].forEach(()=>{const d=document.createElement('div');d.className='typing-dot';ind.appendChild(d);});
+  div.appendChild(ind);msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typing-ind');if(t)t.remove();}
+
+function buildProjection(intake){
+  const card=document.createElement('div');card.className='projection-card';
+  card.innerHTML=`
+    <div class="projection-header">
+      <span class="projection-title">Appointment</span>
+      <span class="projection-tag">⬡ projection</span>
+    </div>
+    <div class="projection-row"><span class="projection-key">patient</span><span class="projection-val">${intake.name||'—'}</span></div>
+    <div class="projection-row"><span class="projection-key">service</span><span class="projection-val">${intake.service||'—'}</span></div>
+    <div class="projection-row"><span class="projection-key">date</span><span class="projection-val">${intake.date||'—'}</span></div>
+    <div class="projection-row"><span class="projection-key">time</span><span class="projection-val">${intake.time||'—'}</span></div>
+    <div class="projection-row"><span class="projection-key">phone</span><span class="projection-val">${intake.phone||'—'}</span></div>
+    <div class="projection-divider"></div>
+    <div class="proj-actions">
+      <button class="proj-btn proj-confirm" onclick="confirmProj(this)">Confirm &amp; Save</button>
+      <button class="proj-btn proj-cancel" onclick="editProj(this)">Edit</button>
+    </div>`;
+  return card;
+}
+function confirmProj(btn){
+  const card=btn.closest('.projection-card');
+  const r={id:db.nextId++,name:chatState.intake.name||'Unknown',phone:chatState.intake.phone||'',email:'',service:chatState.intake.service||'General Checkup',date:chatState.intake.date||'',time:chatState.intake.time||'',branch:'',ptype:'New Patient',notes:'',source:'chat',createdAt:new Date().toISOString()};
+  db.records.push(r);renderRecords();
+  card.innerHTML=`<div style="font-size:11px;font-family:var(--mono);color:#2E9E57;padding:4px 0;display:flex;align-items:center;gap:6px;">✓ saved · record #${r.id} · source:chat</div>`;
+  chatState.step=0;chatState.intake={};chatState.awaitingConfirm=false;
+}
+function editProj(btn){
+  const card=btn.closest('.projection-card');
+  card.querySelector('.proj-cancel').textContent='…';
+  setTimeout(()=>{appendMsg('bot',"Let's go over the details again. What's your name?");chatState.step=1;chatState.intake={};chatState.awaitingConfirm=false;},300);
+}
+function sendChat(){
+  const inp=document.getElementById('chat-input');const text=inp.value.trim();if(!text)return;
+  inp.value='';appendMsg('user',text);showTyping();
+  setTimeout(()=>processChatResp(text),600+Math.random()*400);
+}
+function processChatResp(text){
+  removeTyping();const low=text.toLowerCase();const s=chatState;
+  if(s.awaitingConfirm)return;
+
+  // FAQ responses
+  const faqs=[
+    {k:['insurance','nhif','cover'],r:'We accept NHIF, AAR, Jubilee, CIC, Madison, APA, and 15+ other providers. Bring your card and we handle the rest.'},
+    {k:['price','cost','how much','ksh','kes'],r:'Checkups from KES 1,500 · Cleaning from KES 2,000 · Whitening from KES 8,000 · Root canal from KES 12,000 · Braces from KES 45,000. NHIF covers most routine work.'},
+    {k:['location','where','branch','nairobi','thika','address'],r:'We have 3 locations: Nairobi CBD (Kimathi St, Rehema House), Thika Road (Roysambu, 2nd Avenue Plaza), and Thika Town (Kenyatta Ave, Thika Mall). All open Mon–Sat 8am–6pm.'},
+    {k:['hour','open','time','weekend'],r:'All branches open Monday–Saturday, 8am–6pm. Thika Town closes at 5pm on Fridays. We accommodate walk-ins.'},
+    {k:['pain','hurt','emergency','urgent','tooth ache','toothache'],r:'For emergencies, all branches have same-day slots. Call +254 700 123 456 or just walk in — we prioritise pain cases immediately.'},
+  ];
+  for(const f of faqs){
+    if(f.k.some(k=>low.includes(k))){appendMsg('bot',f.r);return;}
+  }
+
+  // Booking intent
+  if(s.step===0){
+    const bookKw=['book','appoint','visit','checkup','clean','whiten','root','brace','extract','come in','friday','monday','tuesday','wednesday','thursday','saturday','schedule'];
+    if(bookKw.some(k=>low.includes(k))){
+      s.step=1;
+      if(low.includes('checkup')||low.includes('check up'))s.intake.service='General Checkup';
+      if(low.includes('clean'))s.intake.service='Teeth Cleaning';
+      if(low.includes('whiten'))s.intake.service='Whitening';
+      if(low.includes('root'))s.intake.service='Root Canal';
+      if(low.includes('brace'))s.intake.service='Braces Consultation';
+      if(low.includes('friday'))s.intake.date='This Friday';
+      if(low.includes('monday'))s.intake.date='This Monday';
+      if(low.includes('tuesday'))s.intake.date='This Tuesday';
+      if(low.includes('wednesday'))s.intake.date='This Wednesday';
+      if(low.includes('thursday'))s.intake.date='This Thursday';
+      if(low.includes('saturday'))s.intake.date='This Saturday';
+      let resp="Great, let me get you booked in.";
+      if(s.intake.service)resp+=` ${s.intake.service} — noted.`;
+      if(s.intake.date)resp+=` ${s.intake.date} works.`;
+      resp+=" What's your name?";
+      appendMsg('bot',resp);
+      if(s.intake.service&&s.intake.date)s.step=2;
+      else if(s.intake.service||s.intake.date)s.step=2;
+      return;
+    }
+    appendMsg('bot','I can help with bookings, services info, pricing, locations, or insurance questions. What would you like?');
+    return;
+  }
+  if(s.step===1){s.intake.name=text;s.step=2;appendMsg('bot',`Nice to meet you, ${text.split(' ')[0]}! What's the best phone number for you?`);return;}
+  if(s.step===2){s.intake.phone=text;s.step=s.intake.service?4:3;appendMsg('bot',s.intake.service?`Got it. Which date works for you?`:`What service do you need? (e.g. checkup, cleaning, whitening, root canal)`);return;}
+  if(s.step===3){
+    const svcMap={'checkup':'General Checkup','check up':'General Checkup','clean':'Teeth Cleaning','whiten':'Whitening','root':'Root Canal','brace':'Braces Consultation','extract':'Extraction','emergency':'Emergency'};
+    s.intake.service=Object.entries(svcMap).find(([k])=>low.includes(k))?.[1]||text;
+    s.step=4;appendMsg('bot',s.intake.date?`What time do you prefer? (morning, afternoon, or specific slot)`:`What date works for you?`);return;
+  }
+  if(s.step===4){s.intake.date=text;s.step=5;appendMsg('bot','What time works best — morning, afternoon, or a specific slot?');return;}
+  if(s.step===5){
+    s.intake.time=text;s.awaitingConfirm=true;
+    setTimeout(()=>{
+      const msgs=document.getElementById('chat-messages');
+      const wrap=document.createElement('div');wrap.className='msg bot';
+      const lbl=document.createElement('div');lbl.className='msg-label';lbl.textContent='ARROW AI · PARTIAL PROJECTION';
+      const pre=document.createElement('div');pre.className='msg-bubble';pre.style.cssText='margin-bottom:8px;border-color:var(--primary);background:rgba(244,124,44,0.05);';
+      pre.textContent='Here is your appointment summary. Confirm to save:';
+      wrap.appendChild(lbl);wrap.appendChild(pre);wrap.appendChild(buildProjection(s.intake));
+      msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
+    },300);
+    return;
+  }
+}
+
+// init
+document.getElementById('b-date').min=new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
